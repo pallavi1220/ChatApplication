@@ -20,7 +20,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://mern-chat-app.vercel.app" //  apna Vercel URL
+      "https://chat-application-41mc.vercel.app" //  apna Vercel URL
     ],
     credentials: true,
   })
@@ -56,7 +56,7 @@ const io = require("socket.io")(server, {
   cors: {
     origin: [
       "http://localhost:3000",
-      "https://mern-chat-app.vercel.app" // same Vercel URL
+      "https://chat-application-41mc.vercel.app" // same Vercel URL
     ],
     credentials: true,
   },
