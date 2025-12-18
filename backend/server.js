@@ -1,18 +1,30 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
+const cors = require("cors");
+
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
-const path = require("path");
+
 
 
 connectDB();
 const app = express();
 
-app.use(express.json()); // to accept json data
+app.use(express.json());
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://mern-chat-app.vercel.app" //  apna Vercel URL
+    ],
+    credentials: true,
+  })
+);
 
 // app.get("/", (req, res) => {
 //   res.send("API Running!");
@@ -24,19 +36,7 @@ app.use("/api/message", messageRoutes);
 
 // --------------------------deployment------------------------------
 
-const __dirname1 = path.resolve();
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname1, "/frontend/build")));
-
-  app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname1, "frontend", "build", "index.html"))
-  );
-} else {
-  app.get("/", (req, res) => {
-    res.send("API is running..");
-  });
-}
 
 // --------------------------deployment------------------------------
 
@@ -44,7 +44,7 @@ if (process.env.NODE_ENV === "production") {
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8000 ;
 
 const server = app.listen(
   PORT,
@@ -54,10 +54,14 @@ const server = app.listen(
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:3000",
-    // credentials: true,
+    origin: [
+      "http://localhost:3000",
+      "https://mern-chat-app.vercel.app" // same Vercel URL
+    ],
+    credentials: true,
   },
 });
+
 
 io.on("connection", (socket) => {
   console.log("Connected to socket.io");
